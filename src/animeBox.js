@@ -30,21 +30,25 @@ class AnimeBox extends Component {
 
 	computeData(light) {
 		//TODO: check if QQ?
+		//TODO: if first time is follw: QQ?
 		if ("background" in light) {
 			//means alread have?
 			if (light.mode == "follow")
 				//let len = light.background.length;
-				light.background = `rgba(${light.color},${this.props.opacity})`;
+				console.log(`rgba(${light.colorTemp},${this.props.opacity})`);
+				light.background = `rgba(${light.colorTemp},${this.props.opacity})`;
 		} else {
 			light.direction = light.mode == "blink" ? "alternate" : "normal";
 			light.loop = light.mode == "light" ? light.loopTime : light.loopTime*2;
 			light.background = `rgba(${light.color},${light.alpha})`;
+			light.colorTemp = light.color;
 		}
+		console.log(light.background);
 		//TODO: if mode == follow
 
 		//delete light.mode;
 		delete light.loopTime;
-		//delete light.color;
+		delete light.color;
 		delete light.alpha;
 		
 		return light;

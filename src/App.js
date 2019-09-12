@@ -75,6 +75,10 @@ class App extends Component {
     	}
     	if ("mode" in light && "order" in sound) {
     		sound.mode = light.mode;
+
+    	}
+    	if ("mode" in light && "stop" in sound) {
+    		if (light.mode == "follow") light = {};
     	}
     	// TODO: if color mode == follow ? 
 
@@ -218,6 +222,7 @@ class MusicBox extends Component {
 	}
 
 	genAlphaFromSound(order) {
+		console.log("genAlphaFromSound");
 		//this.setState({euro: new OneEuroFilter(200)});
 		this.state.euro = new OneEuroFilter(200);
 		//let {euro, waveform, soundInterval} = this.state;
@@ -225,6 +230,7 @@ class MusicBox extends Component {
 		//euro = new OneEuroFilter(200);
 		if (this.state.soundInterval != null) clearInterval(this.state.soundInterval);
 		//setState
+
 		this.state.soundInterval = setInterval(this.calculateEuro, 100, this);
 		
 	}
