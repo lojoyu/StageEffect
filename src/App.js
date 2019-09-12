@@ -10,7 +10,7 @@ import {OneEuroFilter} from'./filter.js'
 //import { Players, Part, Time } from 'tone';
 
 const SocketNamespace = "/receiver";
-const SERVER = "https://stageeffectserver.appspot.com"
+const SERVER = "https://stage-effect-server1.herokuapp.com";
 
 class App extends Component {
 

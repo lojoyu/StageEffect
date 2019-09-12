@@ -1,6 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
-const configs = require('./src/envSetting.js');
+//const configs = require('./src/envSetting.js');
 
 module.exports = {
   entry: "./src/index.js",
