@@ -1,0 +1,141 @@
+import React, {Component} from "react";
+import Anime from 'react-anime';
+import { Motion, spring, presets} from 'react-motion';
+import {rgbToHsl, hslToRgb} from "./colorUsage.js";
+
+
+class AnimeBox extends Component {
+
+	state = {
+		defaultProp : {
+			easing: "easeInOutQuad",
+			loop: 2,
+			duration: 500,
+			direction: "alternate",
+			delay: 0,
+			endDelay: 0,
+			background: "rgba(0,0,0,1)"
+		}
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
+		// only render when refresh animation
+		if ("mode" in nextProps.data){
+			if (nextProps.data.mode == "follow" 
+				&& nextProps.opacity != this.props.opacity)
+				return true;
+		}
+		return (nextProps.refresh !== this.props.refresh)
+	}
+
+	computeData(light) {
+		//TODO: check if QQ?
+		if ("background" in light) {
+			//means alread have?
+			if (light.mode == "follow")
+				//let len = light.background.length;
+				light.background = `rgba(${light.color},${this.props.opacity})`;
+		} else {
+			light.direction = light.mode == "blink" ? "alternate" : "normal";
+			light.loop = light.mode == "light" ? light.loopTime : light.loopTime*2;
+			light.background = `rgba(${light.color},${light.alpha})`;
+		}
+		//TODO: if mode == follow
+
+		//delete light.mode;
+		delete light.loopTime;
+		//delete light.color;
+		delete light.alpha;
+		
+		return light;
+	}
+
+	genRgbStyle(colorStr) {
+		let bg = colorStr;
+	  	let bgColor = bg.substring(5, bg.length-1).split(",");
+	  	const config = {stiffness: 70, damping: 30};
+	  	return {
+	  		style: {
+		  		r: spring(parseFloat(bgColor[0]),config),
+		  		g: spring(parseFloat(bgColor[1]),config),
+		  		b: spring(parseFloat(bgColor[2]),config),
+		  		a: spring(parseFloat(bgColor[3]),config),
+		  	}, 
+		  	motionFunc: this.rgbMotion
+		  }
+	  	
+	}
+
+	rgbMotion({r, g, b, a}) {
+    	//console.log(r,g,b,a);
+        return (
+        	<div id="lightBox" key={Date.now()}
+	          style={{
+	            background:`rgba(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)},${a})`
+	          }}>
+          </div>);
+    }
+
+	genHslStyle(colorStr) {
+		let bg = colorStr;
+	  	let bgColor = bg.substring(5, bg.length-1).split(",");
+	  	const config = {stiffness: 80, damping: 20};
+		let {h,s,l} = rgbToHsl(parseFloat(bgColor[0]), parseFloat(bgColor[1]), parseFloat(bgColor[2]));
+	  	return {
+	  		style: {
+		  		h: spring(h,config),
+		  		s: spring(s,config),
+		  		l: spring(l,config),
+		  		a: spring(parseFloat(bgColor[3]),config),
+		  	},
+		  	motionFunc: this.hslMotion
+		}
+	  	console.log(hslStyle);
+	}
+
+	hslMotion({h, s, l, a}) {
+    	//console.log(h,s,l,a);
+        return (
+        	<div id="lightBox" key={Date.now()}
+	       
+	          style={{
+	            background:`hsla(${h*360},${s*100}%,${l*100}%,${a})`
+	          }}>
+          </div>);
+    }
+
+	render () {
+		let {defaultProp} = this.state;
+		
+		let lightProp = this.computeData(this.props.data);
+		let animeProp = Object.assign(defaultProp, lightProp);
+		console.log(JSON.stringify(animeProp));
+		
+		//TODO: change rgb type
+		//animeProp.background
+		let {style, motionFunc} = this.genRgbStyle(animeProp.background);
+		//let {style, motionFunc} = this.genHslStyle(this.props.opa);
+		
+	  	let motion = (
+	  		<Motion style={style}>
+	  			{motionFunc}
+        	</Motion>);
+	  	
+	  	let anime = (
+			<Anime key={Date.now()} {...animeProp}>
+		        <div id="lightBox"></div>
+      		</Anime>);
+
+	  	//return motion;
+	  	console.log(animeProp.mode == "blink"? "anime" : "motion")
+	  	return animeProp.mode == "blink"? anime : motion;
+	  		
+	}
+
+}
+
+const colorInterpolate = (startValue, endValue, percentage) => {
+	return (endValue - startValue) * percentage + startValue;
+}
+
+export default AnimeBox;
