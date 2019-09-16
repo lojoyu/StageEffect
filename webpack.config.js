@@ -1,6 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
-//const configs = require('./src/envSetting.js');
+const configs = require('./src/envSetting.js');
 
 module.exports = {
   entry: "./src/index.js",
@@ -25,17 +25,17 @@ module.exports = {
     publicPath: "/dist/",
     filename: "bundle.js"
   },
-  // devServer: {
-  //   contentBase: path.join(__dirname, "public/"),
-  //   port: 3000,
-  //   publicPath: "http://localhost:3000/dist/",
-  //   hotOnly: true
-  // },
+  devServer: {
+    contentBase: path.join(__dirname, "public/"),
+    port: 3000,
+    publicPath: "http://localhost:3000/dist/",
+    hotOnly: true
+  },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    // new webpack.DefinePlugin({
-    //   SERVER: JSON.stringify(configs.serverHost)
-    // })
-    ]
+    new webpack.DefinePlugin({
+      SERVER: JSON.stringify(configs.serverHost)
+    })
+  ]
 };
 

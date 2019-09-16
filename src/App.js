@@ -1,16 +1,15 @@
 import React, {Component} from "react";
-// import Anime from 'react-anime';
 import io from 'socket.io-client'
 import {hot} from "react-hot-loader";
-import "./App.css";
-import {soundFiles, rgbColors} from "./constList.js"
-import AnimeBox from "./animeBox.js"
 import Tone from "Tone"
+import {soundFiles, rgbColors} from "./constList.js"
 import {OneEuroFilter} from'./filter.js'
+import AnimeBox from "./animeBox.js"
+import "./App.css";
 //import { Players, Part, Time } from 'tone';
 
 const SocketNamespace = "/receiver";
-const SERVER = "https://stage-effect-server1.herokuapp.com";
+//const SERVER = "https://stage-effect-server1.herokuapp.com";
 
 class App extends Component {
 
@@ -23,7 +22,8 @@ class App extends Component {
         socketData: {},
         lightData: {},
         soundData: {},
-        opa: "rgba(0,0,0,1)",
+        //opa: "rgba(0,0,0,1)",
+        opa: -1,
         opacity: 0,
     };
 
@@ -42,32 +42,43 @@ class App extends Component {
          		console.log(`<socket> ${data}`);
          	})
 
-         	socket.on("controlData", (data) => {
-         		//console.log(`<socket> controlData!`);
-         		console.log(`<data> ${JSON.stringify(data)}`);
-         		let {light, sound} = this.handleSocketData(data);
-         		console.log(`<light data>  ${JSON.stringify(light)}`)
-         		this.setState((prevState) => ({
-         			lightData: jsonCopy(light),
-         			soundData: jsonCopy(sound),
-         			refreshMusic: sound == {} ? 
-         					prevState.refreshMusic : !prevState.refreshMusic,
-					refreshAnime: sound == {} ? 
-							prevState.refreshAnime : !prevState.refreshAnime
-				}));
-
-         	});
+         	socket.on("controlData", this.receiveControlData.bind(this));
         	
         });
 
     }
 
+    receiveControlData(data) {
+ 		console.log(`<data> ${JSON.stringify(data)}`);
+ 		
+ 		let {light, sound} = this.handleSocketData(data);
+ 		console.log(`<light data>  ${JSON.stringify(light)}`)
+ 		this.setState((prevState) => ({
+ 			lightData: jsonCopy(light),
+ 			soundData: jsonCopy(sound),
+ 			refreshMusic: sound == {} ? 
+ 					prevState.refreshMusic : !prevState.refreshMusic,
+			refreshAnime: sound == {} ? 
+					prevState.refreshAnime : !prevState.refreshAnime
+		}));
+    }
+
     handleSocketData(data) {
-    	//console.log("handleSocketData");
+    	//console.log(rgbColors);
     	var sound = "sound" in data ? this.handleSoundData(data.sound) : {};
     	var light = "light" in data ? this.handleLightData(data.light) : {};
-    	if (!"color" in light && "order" in sound) {
+    	console.log(`<sound> ${JSON.stringify(sound)}`);
+    	console.log(`<light> ${JSON.stringify(light)}`);
+
+    	if (!("color" in light) && "order" in sound) {
+    		console.log(`color: ${rgbColors[sound.order % rgbColors.length]}`);
     		light.color = rgbColors[sound.order % rgbColors.length];
+    	}
+    	if ("color" in light && "order" in sound) {
+    		if (light.color == "*") {
+    			console.log(`color: ${rgbColors[sound.order % rgbColors.length]}`);
+    			light.color = rgbColors[sound.order % rgbColors.length];
+    		}
     	}
     	if ("delay" in light && "order" in sound) {
     		sound.delay = light.delay;
@@ -116,9 +127,9 @@ class App extends Component {
     	return light;
     }
 
-    changeHandler(v, t) {
+    changeHandler(v) {
     	//console.log(`changeHandler: ${v}`);
-    	t.setState({opacity: v});
+    	this.setState({opacity: v});
     }
 
 	render(){
@@ -130,7 +141,7 @@ class App extends Component {
 				<AnimeBox refresh={refreshAnime} data={lightData} 
 				opa={opa} opacity={opacity}></AnimeBox>
 				<button onClick={this.clickButton}></button>
-				<MusicBox refresh={refreshMusic} data={soundData} onChange={this.changeHandler} parent={this}></MusicBox>
+				<MusicBox v={opa} refresh={refreshMusic} data={soundData} onChange={this.changeHandler.bind(this)} parent={this}></MusicBox>
 			</div>
 		);
 	}
@@ -146,7 +157,7 @@ class App extends Component {
     };
 
     clickButton = () => {
-    	//console.log(`click ${this.state.refreshAnime}`);
+    	console.log(`click ${this.state.refreshAnime}`);
     	var r = Math.floor(Math.random()*255);
     	var g = Math.floor(Math.random()*255);
     	var b = Math.floor(Math.random()*255);
@@ -154,9 +165,11 @@ class App extends Component {
     	this.setState((prevState) => ({
 			refreshAnime: !prevState.refreshAnime,
 			refreshMusic: !prevState.refreshMusic,
-			opa: `rgba(${r},${b},${b},1)`
+			//opa: `rgba(${r},${b},${b},1)`
 			//opa: `rgba(255,255,0,1)`
+			opa: prevState.opa*10
 		}));
+		console.log(rgbColors);
     }
 }
 
@@ -173,7 +186,7 @@ class MusicBox extends Component {
 		},soundPreload());
 
 	shouldComponentUpdate(nextProps, nextState) {
-
+		console.log("music box shouldComponentUpdate");
 		if (nextProps.refresh && !this.state.userInput) {
 			this.state.soundPlayer[0].start();
 			this.setState({userInput: 1});
@@ -215,34 +228,37 @@ class MusicBox extends Component {
 		this.state.soundPlayer[order].start();
 		this.state.nowOrder = order;
 		console.log(`this.state.nowOrder ${this.state.nowOrder}`);
-		// if (mode == "follow") 
-		this.genAlphaFromSound(order);
+		//if (mode == "follow") 
+		//DEBUG: uncomment!
+			this.genAlphaFromSound(order);
 		//this.state.nowOrder ++;
 		//this.setState({nowOrder: order});
 	}
 
 	genAlphaFromSound(order) {
 		console.log("genAlphaFromSound");
+		//console.log(`<v> ${this.state.soundPlayer[order].volume.value}`);
 		//this.setState({euro: new OneEuroFilter(200)});
 		this.state.euro = new OneEuroFilter(200);
 		//let {euro, waveform, soundInterval} = this.state;
 		//let euroOut = 0;
 		//euro = new OneEuroFilter(200);
 		if (this.state.soundInterval != null) clearInterval(this.state.soundInterval);
-		//setState
+		//TODO: setState
 
 		this.state.soundInterval = setInterval(this.calculateEuro, 100, this);
 		
 	}
 
-	calculateEuro(t) {
+	calculateEuro = () => {
 		var multi = 7;
 		//console.log(JSON.stringify(t.state));
-		let {nowOrder, waveform, euro} = t.state;
+		let {nowOrder, waveform, euro} = this.state;
 		let euroOut = 0;
-		if (t.state.soundPlayer[nowOrder].state == "stopped") {
+		if (this.state.soundPlayer[nowOrder].state == "stopped") {
 			//TODO: toblack
-
+			clearInterval(this.state.soundInterval);
+			//TODO: setState
 		} else {
 			var waveData = waveform.getValue();
 			//console.log(`${waveData}`);
@@ -259,11 +275,11 @@ class MusicBox extends Component {
             euroOut = 1.0*euro.filter(r);
             //console.log(`euro: ${euroOut}`);
 		}
-		t.props.onChange(euroOut, t.props.parent);
-		
+		this.props.onChange(euroOut, this.props.parent);
+		//this.state.soundPlayer[nowOrder-1].volume.value = this.props.v;
+		//console.log(`<volume>: ${this.state.soundPlayer[nowOrder].volume.value}`);
 	}
 }
-
 
 
 const soundPreload = () => {
