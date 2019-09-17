@@ -27,7 +27,7 @@ module.exports.soundFiles = [
 "sound/Noises/Analogue Hiss Mid Boost.aif", //25
 "sound/Noises/Crackle Pops.aif",
 "sound/Noises/Crunchy Crackle.aif",
-"sound/Noises/Fake Vinyl 1.aif",
+"sound/Noises/Fake Vinyl 1.aif", //28
 "sound/Noises/Fake Vinyl 2.aif",
 "sound/Noises/FizzPop.aif",
 "sound/Noises/FizzPopper2.aif",
@@ -48,7 +48,7 @@ module.exports.rgbColors = [
 "255, 0, 0",	//r
 "255,251,0",	//y
 "150,0,150", 	//purple
-"0, 255, 0",	// g
+"0, 255, 0",	//g
 //3
 "255,191,0",	//yellow
 "255,64,255",	//m

@@ -239,7 +239,9 @@ class MusicBox extends Component {
 
 	clickButton = () => {
 		console.log("click");
+		let data = {order:0, mode:0, volume:0};
 		this.setState({style: {display: "none"}});
+		this.playSound(data);
 			//then(this.forceUpdate());
 	}
 
