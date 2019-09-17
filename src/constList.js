@@ -30,7 +30,8 @@ module.exports.soundFiles = [
 "sound/Noises/Fake Vinyl 1.aif",
 "sound/Noises/Fake Vinyl 2.aif",
 "sound/Noises/FizzPop.aif",
-"sound/S7_recordings/S7_1.m4a", //31
+"sound/Noises/FizzPopper2.aif",
+"sound/S7_recordings/S7_1.m4a", //32
 "sound/S7_recordings/S7_2.m4a", 
 "sound/S7_recordings/S7_3.m4a",
 "sound/S7_recordings/S7_4.m4a",
