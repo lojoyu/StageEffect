@@ -54,10 +54,10 @@ class AnimeBox extends Component {
 		return light;
 	}
 
-	genRgbStyle(colorStr) {
+	genRgbStyle(colorStr, stiffness) {
 		let bg = colorStr;
 	  	let bgColor = bg.substring(5, bg.length-1).split(",");
-	  	const config = {stiffness: 70, damping: 30};
+	  	const config = {stiffness: stiffness, damping: 30}; // 70, 20
 	  	return {
 	  		style: {
 		  		r: spring(parseFloat(bgColor[0]),config),
@@ -117,7 +117,7 @@ class AnimeBox extends Component {
 		
 		//TODO: change rgb type
 		//animeProp.background
-		let {style, motionFunc} = this.genRgbStyle(animeProp.background);
+		let {style, motionFunc} = this.genRgbStyle(animeProp.background, animeProp.duration);
 		//let {style, motionFunc} = this.genHslStyle(this.props.opa);
 		
 	  	let motion = (

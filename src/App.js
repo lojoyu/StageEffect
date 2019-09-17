@@ -15,7 +15,7 @@ class App extends Component {
 
 	state = {
 		socketID: "",
-    	//uuid: sessionStorage.getItem("StageEffectUUID") || genUUID(),
+    	uuid: sessionStorage.getItem("StageEffectUUID") || genUUID(),
         endpoint: SERVER+SocketNamespace,
         refreshAnime: false,
         refreshMusic: false,
@@ -34,7 +34,9 @@ class App extends Component {
         const socket = io(endpoint);
         socket.on("connect", () => {
         	console.log("connected to server");
-        	socket.emit('connected', 'hi');
+        	socket.emit('connected', {
+        		uuid: this.state.uuid
+        	});
 
          	//this.setupBeforeUnloadListener(socket);
          	this.setState({socketID: socket.id});
@@ -99,8 +101,16 @@ class App extends Component {
     handleSoundData(sound) {
     	//if order not in range => no sound!
     	console.log(`handleSoundData ${sound.order}`);
-    	if (!inArrRange(sound.order, soundFiles.length))
-    		return {};
+
+    	if (!inArrRange(sound.order, soundFiles.length)) {
+    		return {}
+    		if (!("volume" in data))
+    			return {};
+    		else {
+    			delete sound.order;
+    			return sound;
+    		}
+    	}
 
     	// if orderTo not in range or < order: to order
     	if (!inArrRange(sound.orderTo, soundFiles.length) 
@@ -137,10 +147,10 @@ class App extends Component {
 		let {refreshAnime, refreshMusic, socketData, opa, lightData, soundData, opacity} = this.state;
 		
 		return(
-			<div>
+			<div id="wrap">
 				<AnimeBox refresh={refreshAnime} data={lightData} 
 				opa={opa} opacity={opacity}></AnimeBox>
-				<button onClick={this.clickButton}></button>
+				
 				<MusicBox v={opa} refresh={refreshMusic} data={soundData} onChange={this.changeHandler.bind(this)} parent={this}></MusicBox>
 			</div>
 		);
@@ -182,6 +192,7 @@ class MusicBox extends Component {
 		nowOrder: 0,
 		euro: null,
 		soundInterval: null,
+		style: {},
 		//timeoutFunc: null,
 		},soundPreload());
 
@@ -195,27 +206,41 @@ class MusicBox extends Component {
 			this.stopAll();
 			return false;
 		}
-		return nextProps.refresh !== this.props.refresh;
+		return (nextProps.refresh !== this.props.refresh) ||
+				(nextState.style !== this.state.style);
 	}
 
 	render() {
 		let {data} = this.props;
-		let {soundPlayer, nowOrder} = this.state;
+		let {style} = this.state;
+		//let {soundPlayer, nowOrder} = this.state;
 		console.log(`<sound Data>${JSON.stringify(data)}`);
 		
 		//soundPlayer[nowOrder].stop();
 		if ("order" in data) {
 			if (data.delay > 0) {
 				setTimeout(() => {
-					this.playSound(data.order, data.mode);
+					this.playSound(data);
 				}, data.delay);
 			} else {
-				this.playSound(data.order);
+				this.playSound(data);
 			}
 		}
+		else if ("volume" in data) {
+			this.state.soundPlayer[nowOrder].volume.value = data.volume;
+		}
 
-		return (<div>{this.state.nowOrder}</div>);
 		
+		return (<button id="soundBtn" style={style} onClick={this.clickButton}>
+					START
+				</button>);
+		
+	}
+
+	clickButton = () => {
+		console.log("click");
+		this.setState({style: {display: "none"}});
+			//then(this.forceUpdate());
 	}
 
 	stopAll() {
@@ -224,11 +249,13 @@ class MusicBox extends Component {
 		}) 
 	}
 
-	playSound(order, mode) {
+	playSound(data) {
+		let {order, mode, volume} = data;
+		this.state.soundPlayer[order].volume.value = volume;
 		this.state.soundPlayer[order].start();
 		this.state.nowOrder = order;
 		console.log(`this.state.nowOrder ${this.state.nowOrder}`);
-		//if (mode == "follow") 
+		if (mode == "follow") 
 		//DEBUG: uncomment!
 			this.genAlphaFromSound(order);
 		//this.state.nowOrder ++;
@@ -276,7 +303,7 @@ class MusicBox extends Component {
             //console.log(`euro: ${euroOut}`);
 		}
 		this.props.onChange(euroOut, this.props.parent);
-		//this.state.soundPlayer[nowOrder-1].volume.value = this.props.v;
+		//this.state.soundPlayer[nowOrder].volume.value = this.props.v;
 		//console.log(`<volume>: ${this.state.soundPlayer[nowOrder].volume.value}`);
 	}
 }
