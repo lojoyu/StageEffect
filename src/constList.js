@@ -12,7 +12,7 @@ module.exports.soundFiles = [
 "sound/Noises/Analogue Hiss Mid Boost.aif", //25 -> 10
 "sound/Noises/Crackle Pops.aif",
 "sound/Noises/Crunchy Crackle.aif",
-"sound/S7_recordings/S7_1.m4a", //32 v
+"sound/S7_recordings/S7_1.m4a", //32 v -> 13
 "sound/S7_recordings/S7_2.m4a", 
 "sound/S7_recordings/S7_3.m4a",
 "sound/S7_recordings/S7_4.m4a",

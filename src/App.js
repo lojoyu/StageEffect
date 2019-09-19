@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import io from 'socket.io-client'
 import {hot} from "react-hot-loader";
 import Tone from "Tone"
-import {soundFiles, rgbColors} from "./constList.js"
+import {soundFiles, rgbColors, soundFadeOut} from "./constList.js"
 import {OneEuroFilter} from'./filter.js'
 import AnimeBox from "./animeBox.js"
 import "./App.css";
@@ -103,8 +103,8 @@ class App extends Component {
     	console.log(`handleSoundData ${sound.order}`);
 
     	if (!inArrRange(sound.order, soundFiles.length)) {
-    		return {}
-    		if (!("volume" in data))
+
+    		if (!("volume" in sound))
     			return {};
     		else {
     			delete sound.order;
@@ -172,14 +172,24 @@ class App extends Component {
     	var g = Math.floor(Math.random()*255);
     	var b = Math.floor(Math.random()*255);
     	//testPlayer[0].start();
-    	this.setState((prevState) => ({
-			refreshAnime: !prevState.refreshAnime,
-			refreshMusic: !prevState.refreshMusic,
-			//opa: `rgba(${r},${b},${b},1)`
-			//opa: `rgba(255,255,0,1)`
-			opa: prevState.opa*10
-		}));
-		console.log(rgbColors);
+    	if (JSON.stringify(this.state.soundData) != "{}") {
+    		this.setState((prevState) => ({
+				refreshMusic: !prevState.refreshMusic,
+			}));
+    	}
+    	if (JSON.stringify(this.state.lightData) != "{}") {
+    		this.setState((prevState) => ({
+				refreshAnime: !prevState.refreshAnime,
+			}));
+    	}
+  //   	this.setState((prevState) => ({
+		// 	refreshAnime: !prevState.refreshAnime,
+		// 	refreshMusic: !prevState.refreshMusic,
+		// 	//opa: `rgba(${r},${b},${b},1)`
+		// 	//opa: `rgba(255,255,0,1)`
+		// 	opa: prevState.opa*10
+		// }));
+		//console.log(rgbColors);
     }
 }
 
@@ -191,7 +201,6 @@ class MusicBox extends Component {
 	constructor() {
 		super();
 		this.state = Object.assign({
-			userInput: 0,
 			nowOrder: 0,
 			euro: null,
 			soundInterval: null,
@@ -203,18 +212,13 @@ class MusicBox extends Component {
 	}
 
 	loadFinish = () => {
-		console.log("heyheyhey");
 		this.setState({buttonTxt: "START", style:{}});
 	}
 	
 
 	shouldComponentUpdate(nextProps, nextState) {
-		console.log("music box shouldComponentUpdate");
-		if (nextProps.refresh && !this.state.userInput) {
-			this.state.soundPlayer[0].start();
-			this.setState({userInput: 1});
-		}
 		if ("stop" in nextProps.data) {
+			console.log(`<stop> stop music`);
 			this.stopAll();
 			return false;
 		}
@@ -225,8 +229,8 @@ class MusicBox extends Component {
 	render() {
 		let {data} = this.props;
 		let {style, buttonTxt} = this.state;
-		//let {soundPlayer, nowOrder} = this.state;
-		console.log(`<sound Data>${JSON.stringify(data)}`);
+		let {soundPlayer, nowOrder} = this.state;
+		console.log(`<sound Data> ${JSON.stringify(data)}`);
 		
 		//soundPlayer[nowOrder].stop();
 		if ("order" in data) {
@@ -239,6 +243,7 @@ class MusicBox extends Component {
 			}
 		}
 		else if ("volume" in data) {
+			console.log(`<volume> ${data.volume}`);
 			this.state.soundPlayer[nowOrder].volume.value = data.volume;
 		}
 
@@ -332,7 +337,7 @@ const soundPreload = () => {
 	for (var i=0; i<soundFiles.length; i++) {
 		var temp = new Tone.Player({
 			"url": soundFiles[i],
-			"fadeOut": 0
+			"fadeOut": soundFadeOut[i]
 			}).connect(meter).connect(waveform).connect(fft).toMaster();
 		soundPlayer.push(temp);
 	}

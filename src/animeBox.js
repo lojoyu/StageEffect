@@ -119,7 +119,7 @@ class AnimeBox extends Component {
 		//animeProp.background
 		let {style, motionFunc} = this.genRgbStyle(animeProp.background, animeProp.duration);
 		//let {style, motionFunc} = this.genHslStyle(this.props.opa);
-		
+		console.log(animeProp.duration);
 	  	let motion = (
 	  		<Motion style={style}>
 	  			{motionFunc}
