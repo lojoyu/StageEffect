@@ -187,14 +187,26 @@ class App extends Component {
 
 class MusicBox extends Component {
 
-	state = Object.assign({
-		userInput: 0,
-		nowOrder: 0,
-		euro: null,
-		soundInterval: null,
-		style: {},
-		//timeoutFunc: null,
-		},soundPreload());
+
+	constructor() {
+		super();
+		this.state = Object.assign({
+			userInput: 0,
+			nowOrder: 0,
+			euro: null,
+			soundInterval: null,
+			style: {border: "0px"},
+			buttonTxt: "LOADING..."
+			//timeoutFunc: null,
+			},soundPreload());
+		Tone.Buffer.on('load', this.loadFinish);
+	}
+
+	loadFinish = () => {
+		console.log("heyheyhey");
+		this.setState({buttonTxt: "START", style:{}});
+	}
+	
 
 	shouldComponentUpdate(nextProps, nextState) {
 		console.log("music box shouldComponentUpdate");
@@ -212,7 +224,7 @@ class MusicBox extends Component {
 
 	render() {
 		let {data} = this.props;
-		let {style} = this.state;
+		let {style, buttonTxt} = this.state;
 		//let {soundPlayer, nowOrder} = this.state;
 		console.log(`<sound Data>${JSON.stringify(data)}`);
 		
@@ -232,17 +244,17 @@ class MusicBox extends Component {
 
 		
 		return (<button id="soundBtn" style={style} onClick={this.clickButton}>
-					START
+					{buttonTxt}
 				</button>);
 		
 	}
 
 	clickButton = () => {
+		if (this.state.buttonTxt != "START") return;
 		console.log("click");
 		let data = {order:0, mode:0, volume:0};
 		this.setState({style: {display: "none"}});
 		this.playSound(data);
-			//then(this.forceUpdate());
 	}
 
 	stopAll() {
@@ -318,10 +330,14 @@ const soundPreload = () => {
 	var soundPlayer = [];
 
 	for (var i=0; i<soundFiles.length; i++) {
-		var temp = new Tone.Player(soundFiles[i]).connect(meter).connect(waveform).connect(fft).toMaster();
+		var temp = new Tone.Player({
+			"url": soundFiles[i],
+			"fadeOut": 0
+			}).connect(meter).connect(waveform).connect(fft).toMaster();
 		soundPlayer.push(temp);
 	}
 	return {meter: meter, fft: fft, waveform: waveform, soundPlayer:soundPlayer};
+	
 }
 
 const inArrRange = (num, len) => {
