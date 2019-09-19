@@ -37,7 +37,7 @@ class AnimeBox extends Component {
 		//TODO: if first time is follw: QQ?
 
 		let alpha = 0;
-		console.log(`<background ?> ${JSON.stringify(light)}`);
+		//console.log(`<background ?> ${JSON.stringify(light)}`);
 		if ("color" in light) {
 			light.colorTemp = light.color;
 		}
@@ -53,7 +53,7 @@ class AnimeBox extends Component {
 			light.loop = light.mode == "light" ? light.loopTime : light.loopTime*2;
 		}
 		light.background = `rgba(${light.colorTemp},${alpha})`;
-		console.log(light.background);
+		//console.log(light.background);
 		//TODO: if mode == follow
 
 		//delete light.mode;
@@ -104,7 +104,7 @@ class AnimeBox extends Component {
 		  	},
 		  	motionFunc: this.hslMotion
 		}
-	  	console.log(hslStyle);
+	  	//console.log(hslStyle);
 	}
 
 	hslMotion({h, s, l, a}) {
@@ -124,13 +124,13 @@ class AnimeBox extends Component {
 		
 		let lightProp = this.computeData(this.props.data);
 		let animeProp = Object.assign(defaultProp, lightProp);
-		console.log(`<render animebox> ${JSON.stringify(animeProp)}`);
+		//console.log(`<render animebox> ${JSON.stringify(animeProp)}`);
 		
 		//TODO: change rgb type
 		//animeProp.background
 		let {style, motionFunc} = this.genRgbStyle(animeProp.background, animeProp.duration);
 		//let {style, motionFunc} = this.genHslStyle(this.props.opa);
-		console.log(animeProp.duration);
+		//console.log(animeProp.duration);
 	  	let motion = (
 	  		<Motion style={style}>
 	  			{motionFunc}
@@ -142,7 +142,7 @@ class AnimeBox extends Component {
       		</Anime>);
 
 	  	//return motion;
-	  	console.log(animeProp.mode == "blink"? "anime" : "motion")
+	  	//console.log(animeProp.mode == "blink"? "anime" : "motion")
 	  	return animeProp.mode == "blink"? anime : motion;
 	  		
 	}

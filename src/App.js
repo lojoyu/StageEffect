@@ -40,7 +40,7 @@ class App extends Component {
          	//this.setupBeforeUnloadListener(socket);
          	this.setState({socketID: socket.id});
          	socket.on("debug", (data) => {
-         		console.log(`<socket> ${data}`);
+         		//console.log(`<socket> ${data}`);
          	})
 
          	socket.on("controlData", this.receiveControlData.bind(this));
@@ -50,10 +50,10 @@ class App extends Component {
     }
 
     receiveControlData(data) {
- 		console.log(`<data> ${JSON.stringify(data)}`);
+ 		//console.log(`<data> ${JSON.stringify(data)}`);
  		
  		let {light, sound} = this.handleSocketData(data);
- 		console.log(`<sound data>  ${JSON.stringify(sound)}`)
+ 		//console.log(`<sound data>  ${JSON.stringify(sound)}`)
  		if (JSON.stringify(sound) != "{}") {
  			this.setState((prevState) => ({
 	 			soundData: jsonCopy(sound),
@@ -144,7 +144,7 @@ class App extends Component {
     }
 
     changeHandler(v) {
-    	console.log(`changeHandler: ${v}`);
+    	//console.log(`changeHandler: ${v}`);
     	this.setState({opacity: v});
     }
 
@@ -173,7 +173,7 @@ class App extends Component {
     };
 
     clickButton = () => {
-    	console.log(`click ${this.state.refreshAnime}`);
+    	//console.log(`click ${this.state.refreshAnime}`);
     	var r = Math.floor(Math.random()*255);
     	var g = Math.floor(Math.random()*255);
     	var b = Math.floor(Math.random()*255);
@@ -224,7 +224,7 @@ class MusicBox extends Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 		if ("stop" in nextProps.data) {
-			console.log(`<stop> stop music`);
+			//console.log(`<stop> stop music`);
 			this.stopAll();
 			return false;
 		}
@@ -236,7 +236,7 @@ class MusicBox extends Component {
 		let {data} = this.props;
 		let {style, buttonTxt} = this.state;
 		let {soundPlayer, nowOrder} = this.state;
-		console.log(`<render sound Data> ${JSON.stringify(data)}`);
+		//console.log(`<render sound Data> ${JSON.stringify(data)}`);
 		//console.log(`<render> animBOX`);
 		//soundPlayer[nowOrder].stop();
 		if ("order" in data) {
@@ -249,7 +249,7 @@ class MusicBox extends Component {
 			}
 		}
 		else if ("volume" in data) {
-			console.log(`<volume> ${data.volume}`);
+			//console.log(`<volume> ${data.volume}`);
 			this.state.soundPlayer[nowOrder].volume.value = data.volume;
 		}
 
@@ -262,7 +262,7 @@ class MusicBox extends Component {
 
 	clickButton = () => {
 		if (this.state.buttonTxt != "START") return;
-		console.log("click");
+		//console.log("click");
 		let data = {order:0, mode:0, volume:0};
 		this.setState({style: {display: "none"}});
 		this.playSound(data);
