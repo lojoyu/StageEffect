@@ -28,7 +28,6 @@ class App extends Component {
     };
 
     componentDidMount() {
-    	console.log(`soundFiles: ${soundFiles.length}`);
         let {endpoint} = this.state;
 
         const socket = io(endpoint);
@@ -54,31 +53,39 @@ class App extends Component {
  		console.log(`<data> ${JSON.stringify(data)}`);
  		
  		let {light, sound} = this.handleSocketData(data);
- 		console.log(`<light data>  ${JSON.stringify(light)}`)
- 		this.setState((prevState) => ({
- 			lightData: jsonCopy(light),
- 			soundData: jsonCopy(sound),
- 			refreshMusic: sound == {} ? 
- 					prevState.refreshMusic : !prevState.refreshMusic,
-			refreshAnime: sound == {} ? 
-					prevState.refreshAnime : !prevState.refreshAnime
-		}));
+ 		console.log(`<sound data>  ${JSON.stringify(sound)}`)
+ 		if (JSON.stringify(sound) != "{}") {
+ 			this.setState((prevState) => ({
+	 			soundData: jsonCopy(sound),
+	 			refreshMusic: !prevState.refreshMusic,
+				
+			}));
+ 		}
+ 		if (JSON.stringify(light) != "{}") {
+ 			this.setState((prevState) => ({
+ 				soundData: jsonCopy(sound),
+	 			lightData: jsonCopy(light),
+	 			refreshAnime: !prevState.refreshAnime,
+				
+			}));
+ 		}
     }
 
     handleSocketData(data) {
     	//console.log(rgbColors);
     	var sound = "sound" in data ? this.handleSoundData(data.sound) : {};
     	var light = "light" in data ? this.handleLightData(data.light) : {};
-    	console.log(`<sound> ${JSON.stringify(sound)}`);
-    	console.log(`<light> ${JSON.stringify(light)}`);
+    	 
+    	//console.log(`<sound> ${JSON.stringify(sound)}`);
+    	//console.log(`<light> ${JSON.stringify(light)}`);
 
-    	if (!("color" in light) && "order" in sound) {
-    		console.log(`color: ${rgbColors[sound.order % rgbColors.length]}`);
+    	if (!("color" in light) && JSON.stringify(light) != "{}" && "order" in sound) {
+    		//console.log(`color: ${rgbColors[sound.order % rgbColors.length]}`);
     		light.color = rgbColors[sound.order % rgbColors.length];
     	}
     	if ("color" in light && "order" in sound) {
     		if (light.color == "*") {
-    			console.log(`color: ${rgbColors[sound.order % rgbColors.length]}`);
+    			//console.log(`color: ${rgbColors[sound.order % rgbColors.length]}`);
     			light.color = rgbColors[sound.order % rgbColors.length];
     		}
     	}
@@ -100,10 +107,9 @@ class App extends Component {
 
     handleSoundData(sound) {
     	//if order not in range => no sound!
-    	console.log(`handleSoundData ${sound.order}`);
+    	//console.log(`handleSoundData ${sound.order}`);
 
     	if (!inArrRange(sound.order, soundFiles.length)) {
-
     		if (!("volume" in sound))
     			return {};
     		else {
@@ -120,7 +126,7 @@ class App extends Component {
     	//calculate random
 	    sound.order = sound.order + 
 	    		Math.floor(Math.random()*(sound.orderTo-sound.order));
-	    console.log(`order ${sound.order}`); 
+	    //console.log(`order ${sound.order}`); 
 
 	    if ("stop" in sound) {
     		if (sound.stop == "*") delete sound.stop;
@@ -138,7 +144,7 @@ class App extends Component {
     }
 
     changeHandler(v) {
-    	//console.log(`changeHandler: ${v}`);
+    	console.log(`changeHandler: ${v}`);
     	this.setState({opacity: v});
     }
 
@@ -149,9 +155,9 @@ class App extends Component {
 		return(
 			<div id="wrap">
 				<AnimeBox refresh={refreshAnime} data={lightData} 
-				opa={opa} opacity={opacity}></AnimeBox>
+				opacity={opacity}></AnimeBox>
 				
-				<MusicBox v={opa} refresh={refreshMusic} data={soundData} onChange={this.changeHandler.bind(this)} parent={this}></MusicBox>
+				<MusicBox refresh={refreshMusic} data={soundData} onChange={this.changeHandler.bind(this)} parent={this}></MusicBox>
 			</div>
 		);
 	}
@@ -230,8 +236,8 @@ class MusicBox extends Component {
 		let {data} = this.props;
 		let {style, buttonTxt} = this.state;
 		let {soundPlayer, nowOrder} = this.state;
-		console.log(`<sound Data> ${JSON.stringify(data)}`);
-		
+		console.log(`<render sound Data> ${JSON.stringify(data)}`);
+		//console.log(`<render> animBOX`);
 		//soundPlayer[nowOrder].stop();
 		if ("order" in data) {
 			if (data.delay > 0) {
@@ -273,7 +279,7 @@ class MusicBox extends Component {
 		this.state.soundPlayer[order].volume.value = volume;
 		this.state.soundPlayer[order].start();
 		this.state.nowOrder = order;
-		console.log(`this.state.nowOrder ${this.state.nowOrder}`);
+		//console.log(`this.state.nowOrder ${this.state.nowOrder}`);
 		if (mode == "follow") 
 		//DEBUG: uncomment!
 			this.genAlphaFromSound(order);
@@ -282,7 +288,7 @@ class MusicBox extends Component {
 	}
 
 	genAlphaFromSound(order) {
-		console.log("genAlphaFromSound");
+		//console.log("genAlphaFromSound");
 		//console.log(`<v> ${this.state.soundPlayer[order].volume.value}`);
 		//this.setState({euro: new OneEuroFilter(200)});
 		this.state.euro = new OneEuroFilter(200);

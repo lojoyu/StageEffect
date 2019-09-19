@@ -20,29 +20,39 @@ class AnimeBox extends Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 		// only render when refresh animation
-		if ("mode" in nextProps.data){
-			if (nextProps.data.mode == "follow" 
-				&& nextProps.opacity != this.props.opacity)
-				return true;
+		// if ("mode" in nextProps.data){
+		// 	if (nextProps.data.mode == "follow" 
+		// 		
+		// }
+		if (nextProps.data.mode == "follow"
+			&& nextProps.opacity != this.props.opacity) {
+
+			return true;
 		}
-		return (nextProps.refresh !== this.props.refresh)
+		return (nextProps.refresh !== this.props.refresh);
 	}
 
 	computeData(light) {
 		//TODO: check if QQ?
 		//TODO: if first time is follw: QQ?
-		if ("background" in light) {
-			//means alread have?
-			if (light.mode == "follow")
-				//let len = light.background.length;
-				console.log(`rgba(${light.colorTemp},${this.props.opacity})`);
-				light.background = `rgba(${light.colorTemp},${this.props.opacity})`;
-		} else {
-			light.direction = light.mode == "blink" ? "alternate" : "normal";
-			light.loop = light.mode == "light" ? light.loopTime : light.loopTime*2;
-			light.background = `rgba(${light.color},${light.alpha})`;
+
+		let alpha = 0;
+		console.log(`<background ?> ${JSON.stringify(light)}`);
+		if ("color" in light) {
 			light.colorTemp = light.color;
 		}
+		if ("alpha" in light) {
+			alpha = light.alpha;
+		} 
+		if (light.mode == "follow"){
+			alpha = this.props.opacity;
+		}
+
+		if (!("background" in light)) {
+			light.direction = light.mode == "blink" ? "alternate" : "normal";
+			light.loop = light.mode == "light" ? light.loopTime : light.loopTime*2;
+		}
+		light.background = `rgba(${light.colorTemp},${alpha})`;
 		console.log(light.background);
 		//TODO: if mode == follow
 
@@ -109,11 +119,12 @@ class AnimeBox extends Component {
     }
 
 	render () {
+		//console.log(`<render> animBOX`);
 		let {defaultProp} = this.state;
 		
 		let lightProp = this.computeData(this.props.data);
 		let animeProp = Object.assign(defaultProp, lightProp);
-		console.log(JSON.stringify(animeProp));
+		console.log(`<render animebox> ${JSON.stringify(animeProp)}`);
 		
 		//TODO: change rgb type
 		//animeProp.background
