@@ -8,7 +8,7 @@ var setupHost = () => {
     case "production":
       //break;
     default: 
-      serverHost = "";
+      serverHost = "1";
   }
   console.log("server: "+ serverHost)
 }
