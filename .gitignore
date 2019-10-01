@@ -1,2 +1,3 @@
 node_modules
+src/envSetting.js
 .DS_Store
