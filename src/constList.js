@@ -25,6 +25,13 @@ module.exports.soundFadeOut = [
 10,10,10,10
 ]
 
+module.exports.soundFadeIn = [
+0,0,0,0,0,
+0,0,0,0,0,
+0,0,0,
+10,10,10,10
+]
+
 /*
 "sound/iPad_FX_Samples/sample_3-1.wav", //3,4 x
 "sound/iPad_FX_Samples/sample_3-2.wav",

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import io from 'socket.io-client'
 import {hot} from "react-hot-loader";
 import Tone from "Tone"
-import {soundFiles, rgbColors, soundFadeOut} from "./constList.js"
+import {soundFiles, rgbColors, soundFadeOut, soundFadeIn} from "./constList.js"
 import {OneEuroFilter} from'./filter.js'
 import AnimeBox from "./animeBox.js"
 import "./App.css";
@@ -40,7 +40,7 @@ class App extends Component {
          	//this.setupBeforeUnloadListener(socket);
          	this.setState({socketID: socket.id});
          	socket.on("debug", (data) => {
-         		//console.log(`<socket> ${data}`);
+         		console.log(`<socket> ${data}`);
          	})
 
          	socket.on("controlData", this.receiveControlData.bind(this));
@@ -343,7 +343,8 @@ const soundPreload = () => {
 	for (var i=0; i<soundFiles.length; i++) {
 		var temp = new Tone.Player({
 			"url": soundFiles[i],
-			"fadeOut": soundFadeOut[i]
+			"fadeOut": soundFadeOut[i],
+			"fadeIn": soundFadeIn[i]
 			}).connect(meter).connect(waveform).connect(fft).toMaster();
 		soundPlayer.push(temp);
 	}
