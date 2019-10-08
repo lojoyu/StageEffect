@@ -2238,7 +2238,6 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-338",
@@ -7756,7 +7755,6 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-11",
@@ -9428,7 +9426,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 34.0, 404.0, 801.0, 687.0 ],
+						"rect" : [ 34.0, 79.0, 1212.0, 687.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -12789,14 +12787,14 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "StageEffectMax",
-				"bootpath" : "~/Desktop",
+				"bootpath" : "~/Documents/Zonesound/StageEffect",
 				"patcherrelativepath" : "..",
 				"type" : "fold",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "color_string.js",
-				"bootpath" : "~/Desktop/StageEffectMax",
+				"bootpath" : "~/Documents/Zonesound/StageEffect/StageEffectMax",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1

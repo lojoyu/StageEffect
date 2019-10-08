@@ -1,10 +1,10 @@
 import React, {Component} from "react";
-import io from 'socket.io-client'
+import io from "socket.io-client"
 import {hot} from "react-hot-loader";
-import Tone from "Tone"
-import {soundFiles, rgbColors, soundFadeOut, soundFadeIn} from "./constList.js"
-import {OneEuroFilter} from'./filter.js'
-import AnimeBox from "./animeBox.js"
+import Tone from "Tone";
+import {soundFiles, rgbColors, soundFadeOut, soundFadeIn} from "./constList.js";
+import {OneEuroFilter} from "./filter.js";
+import AnimeBox from "./animeBox.js";
 import "./App.css";
 //import { Players, Part, Time } from 'tone';
 
@@ -33,7 +33,7 @@ class App extends Component {
         const socket = io(endpoint);
         socket.on("connect", () => {
         	console.log("connected to server");
-        	socket.emit('connected', {
+        	socket.emit("connected", {
         		uuid: this.state.uuid
         	});
 

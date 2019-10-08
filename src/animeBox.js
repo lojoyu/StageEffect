@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import Anime from 'react-anime';
-import { Motion, spring, presets} from 'react-motion';
+import Anime from "react-anime";
+import { Motion, spring, presets} from "react-motion";
 import {rgbToHsl, hslToRgb} from "./colorUsage.js";
 
 
